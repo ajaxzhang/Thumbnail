@@ -34,3 +34,6 @@ public class MainApplication extends Application {
 ### 3. 实例化aliyun提供的api  AliyunIThumbnailFetcher，设置params 生成的缩略图的大小，之后调用requestThumbnailImage，传入要获取某一duration时间点，通过回调方法onThumbnailReady获取com.aliyun.common.media.ShareableBitmap<br>
 ### 4. shareableBitmap.getData()可获取缩略图bitmap，最后显示到ImageView中
 
+视频地址：<br>
+http://v.youku.com/v_show/id_XMzU4NTkxNzA5Mg==.html?spm=a2hww.20027244.uerCenter.5!3~5~5!2~5~DL~DD~A
+
