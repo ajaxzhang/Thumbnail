@@ -3,6 +3,7 @@ package com.aliyun.thumbnail;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -96,6 +97,23 @@ public class MainActivity extends AppCompatActivity {
         return duration;
     }
 
+    public static int[] getVideoSize(String path) {
+        int[] size = {0, 0};
+        android.media.MediaMetadataRetriever mmr = new android.media.MediaMetadataRetriever();
+
+        try {
+            if (path != null) {
+                mmr.setDataSource(path);
+            }
+            size[0] = Integer.valueOf(mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+            size[1] = Integer.valueOf(mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+        } catch (Exception ex) {
+        } finally {
+            mmr.release();
+        }
+        return size;
+    }
+
     private void getThumbNail(long time[]) {
         AliyunIThumbnailFetcher mThumbnailFetcher = AliyunThumbnailFetcherFactory.createThumbnailFetcher();
         long duration = Long.valueOf(((TextView) findViewById(R.id.duration)).getText().toString());
@@ -104,7 +122,12 @@ public class MainActivity extends AppCompatActivity {
         if (!path.equalsIgnoreCase("")) {
             mThumbnailFetcher.addVideoSource(path, 0, duration);
         }
-        int ret = mThumbnailFetcher.setParameters(360, 180, AliyunIThumbnailFetcher.CropMode.Mediate, ScaleMode.LB, 300);
+        int[] size = getVideoSize(path);
+        int width = 0;
+        if (size[0] > 240) {
+            width = 360/(size[0]/240);
+        }
+        int ret = mThumbnailFetcher.setParameters(width, 240, AliyunIThumbnailFetcher.CropMode.Mediate, ScaleMode.LB, 300);
         Log.d(TAG, "setParams retCode = " + ret);
         mThumbnailFetcher.requestThumbnailImage(time,
                 new AliyunIThumbnailFetcher.OnThumbnailCompletion() {
